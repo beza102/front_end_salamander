@@ -11,18 +11,18 @@ header {
 
 .salamander_image {
     border-radius: 50%; 
-    width: 155px;
+    width: 130px;
     z-index: 1;
 }
 
 .name {
     white-space: nowrap;
     font-family: El Messiri;
-    font-weight: 400;
-    font-size: 1.6rem;
+    font-weight: 600;
+    font-size: 1.5rem;
     color: #DF99C5;
     background-color: rgba(124, 103, 189, 0.1);
-    padding: 24px;
+    padding: 20px;
     padding-right: 45px;
     border-radius: 200px;
     width: 320px;
@@ -32,16 +32,19 @@ header {
 }
 
 .pageName {
-    font-family: El Messiri;
-    font-weight: 400;
-    font-size: 1.6rem;
-    color: #DF99C5;
+    font-weight: 10;
+    font-size: 1.2rem;
+    color: #dcbcd0;
     background-color: rgba(124, 103, 189, 0.1);
-    padding: 24px;
-    padding-right: 45px;
-    padding-left: 45px;
+    padding: 28px;
+    padding-right: 40px;
+    padding-left: 40px;
     margin-left: 5%;
-    border-radius: 200px;
+    border-top-left-radius: 200px;
+    border-bottom-left-radius: 200px;
+    border-top-right-radius: 45px;
+    border-bottom-right-radius: 45px;
+        
     width: 70%;
 }
 
@@ -52,18 +55,33 @@ footer {
     color: #7d7f94;
     text-align: right;
     margin-right: 2%;
-    font-size: smaller;
+    font-size: x-small;
+}
+
+.buttons {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    margin-bottom: 2%;
+    gap: 5%;
+    align-items: center;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 .smallButtons {
   background-color: #DF99C5;
-  width: 340px;
-  height: 50px;
+  width: 300px;
+  height: 42px;
   border-radius: 10px;
-  border: 2px solid #DF99C5; /* add this */
+  border: 2px solid #DF99C5;
 }
 
 .smallButtons:hover {
   border-color: #5c3e51;
+  border-width: 3px;
 }
 
+.smallButtons:active {
+  background-color: #c670ab;
+}
