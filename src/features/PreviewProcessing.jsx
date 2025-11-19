@@ -6,7 +6,7 @@ export default function PreviewProcessing() {
 
     const handleGoBack = () => {
         navigate(-1);
-  };
+    };
 
     const handleProcessVideo = () => {
         navigate('/processing/:jobId');

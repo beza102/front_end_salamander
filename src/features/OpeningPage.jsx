@@ -7,7 +7,7 @@ export default function OpeningPage() {
 
     const handleGetStarted = () => {
         // Navigate to the main dashboard page
-        navigate('/main');
+        navigate('/select-video');
     };
 
     return (

@@ -6,8 +6,8 @@ export default function VideoSelection() {
     const navigate = useNavigate();
 
     const handleGoBack = () => {
-    navigate(-1);
-  };
+        navigate(-1);
+    };
 
     const handleVideoProcessing = () => {
         navigate('/preview');
