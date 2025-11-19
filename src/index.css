@@ -77,11 +77,22 @@ footer {
   border: 2px solid #DF99C5;
 }
 
-.smallButtons:hover {
+.largeButton {
+  background-color: #DF99C5;
+  width: 500px;
+  height: 42px;
+  border-radius: 10px;
+  border: 2px solid #DF99C5;
+}
+
+.smallButtons:hover,
+.largeButton:hover  {
   border-color: #5c3e51;
   border-width: 3px;
 }
 
-.smallButtons:active {
+.smallButtons:active,
+.largeButton:hover  {
   background-color: #c670ab;
 }
+

@@ -24,12 +24,14 @@ export default function OpeningPage() {
                     <p>3. Process the video and view the results.</p>
                 </div>
                 
-                <button 
-                    className="get-started-button"
-                    onClick={handleGetStarted}
-                >
-                    Get Started
-                </button>
+                <div className="buttons">
+                    <button 
+                        className="largeButton"
+                        onClick={handleGetStarted}
+                    >
+                        Get Started
+                    </button>
+                </div>
             </main>
             
             <Footer />
