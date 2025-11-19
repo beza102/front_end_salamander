@@ -1,7 +1,17 @@
+import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header'
-import Buttons from '../components/Buttons'
 
 export default function PreviewProcessing() {
+    const navigate = useNavigate();
+
+    const handleGoBack = () => {
+        navigate(-1);
+  };
+
+    const handleProcessVideo = () => {
+        navigate('/processing/:jobId');
+    };
+
     return (
 
 
@@ -13,7 +23,20 @@ export default function PreviewProcessing() {
             <h2>Target Color</h2>
             <h2>Threshold</h2>
 
-            <Buttons />
+            <div className="buttons">
+                <button 
+                    className="smallButtons"
+                    onClick={handleGoBack}
+                >
+                    Go Back
+                </button>
+                <button 
+                    className="smallButtons"
+                    onClick={handleProcessVideo}
+                >
+                    Process Video
+                </button>
+            </div>
 
         </div>
 
