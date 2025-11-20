@@ -1,0 +1,37 @@
+.preview-container {
+    padding: 2rem;
+    color: white;
+}
+
+.preview-content {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2rem;
+    gap: 2rem;
+}
+
+.preview-section {
+    flex: 1;
+}
+
+.frame-box {
+    height: 250px;
+    border: 2px solid #DF99C5;
+    border-radius: 12px;
+    background-color: rgba(255,255,255,0.05);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.controls {
+    margin-top: 2rem;
+    display: flex;
+    gap: 3rem;
+}
+
+.control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}

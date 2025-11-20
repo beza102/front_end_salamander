@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
 import Header from '../components/Header';
+import '../css/previewProcessing.css';
 
 export default function PreviewProcessing() {
     const navigate = useNavigate();
