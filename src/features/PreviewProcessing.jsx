@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import Header from '../components/Header';
-import Buttons from '../components/Buttons';
 
 export default function PreviewProcessing() {
     const navigate = useNavigate();
@@ -64,8 +63,6 @@ export default function PreviewProcessing() {
                 </div>
             </div>
 
-            {/* Bottom Buttons */}
-            <Buttons />
         </div>
     );
 }
