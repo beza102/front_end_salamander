@@ -4,30 +4,51 @@ import Header from '../components/Header';
 import Footer from '../components/Footer.jsx'; 
 import '../css/previewProcessing.css';
 
-function VideoList({ videoFiles, onPreview, onSelect }) {
+function VideoList({ videoFiles, onPreview, onSelect, onUpload }) {
+
+    const handleFileSelect = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            onUpload(file);
+        }
+    };
+
     return (
         <div className="video-list-container">
             <div className="video-list">
                 <h3>List of Available Videos</h3>
-                {videoFiles.map((video, index) => (
-                    <div className="video-row" key={index}>
-                        <div className="video-name">{video}</div>
-                        <button 
-                            className="small-buttons" 
-                            onClick={() => onPreview(video)}
-                        >
-                            Preview
-                        </button>
-                        <button 
-                            className="small-buttons" 
-                            onClick={() => onSelect(video)}
-                        >
-                            Select
-                        </button>
-                    </div>
-                ))}
+                <div className='scroll-list'>
+                    {videoFiles.map((video, index) => (
+                        <div className="video-row" key={index}>
+                            <div className="video-name">{video}</div>
+                            <button 
+                                className="small-buttons" 
+                                onClick={() => onPreview(video)}
+                            >
+                                Preview
+                            </button>
+                            <button 
+                                className="small-buttons" 
+                                onClick={() => onSelect(video)}
+                            >
+                                Select
+                            </button>
+                        </div>
+                    ))}
+                </div>
+
                 <div className="upload-video">
-                    <button>
+                    <input 
+                        type="file"
+                        accept="video/*"
+                        id="upload-video-input"
+                        style={{ display: "none" }}
+                        onChange={handleFileSelect}
+                    />
+
+                    <button
+                        onClick={() => document.getElementById("upload-video-input").click()}
+                    >
                         Upload Video
                     </button>
                 </div>
@@ -98,11 +119,19 @@ export default function PreviewProcessing() {
         "Ensatina eschscholtzii 04_04_25.mov",
         "GMT20241017-200208_Recording_1920×1080.mp4",
         "Ensatina eschscholtzii 04_04_25 (1).mov",
+        "Ensatina eschscholtzii 04_04_25.MP4",
+        // "Ensatina eschscholtzii 04_04_25.mov",
+        // "GMT20241017-200208_Recording_1920×1080.mp4",
+        // "Ensatina eschscholtzii 04_04_25 (1).mov",
         // "Ensatina eschscholtzii 04_04_25.MP4"
     ];
 
     const handleGoBack = () => {
         navigate(-1);
+    };
+
+    const handleProcessVideo = () => {
+        navigate('/processing/:jobId');
     };
 
     const handlePreview = (video) => {
@@ -113,7 +142,7 @@ export default function PreviewProcessing() {
     return (
         <div className="preview-container">
 
-            <Header pageName="Preview & Processing" />
+            <Header pageName="Preview Processing" />
 
             <div className="main-content">
                 {/* Video list */}
@@ -138,6 +167,12 @@ export default function PreviewProcessing() {
                     onClick={handleGoBack}
                 >
                     Go Back
+                </button>
+                <button 
+                    className="smallButtons"
+                    onClick={handleProcessVideo}
+                >
+                    Process Video
                 </button>
             </div>
 

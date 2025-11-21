@@ -3,9 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 // Import all page components
 
 import Footer from './components/Footer.jsx';
-import OpeningPage from './features/OpeningPage.jsx'; 
 import MainPage from './features/MainPage.jsx';
-import VideoSelection from './features/VideoSelection.jsx';
 import PreviewProcessing from './features/PreviewProcessing.jsx';
 import VideoProcessing from './features/VideoProcessing.jsx';
 
@@ -21,9 +19,7 @@ export default function App() {
                 
                 <Routes>
                     {/* all routes */}
-                    <Route path="/" element={<OpeningPage />} />
-                    <Route path="/main" element={<MainPage />} />
-                    <Route path="/select-video" element={<VideoSelection />} />
+                    <Route path="/" element={<MainPage />} />
                     <Route path="/preview-processing" element={<PreviewProcessing />} />
                     <Route path="/processing/:jobId" element={<VideoProcessing />} />
                     
