@@ -44,7 +44,6 @@ header {
     border-bottom-left-radius: 200px;
     border-top-right-radius: 45px;
     border-bottom-right-radius: 45px;
-        
     width: 70%;
 }
 
@@ -86,13 +85,16 @@ footer {
 }
 
 .smallButtons:hover,
-.largeButton:hover  {
+.largeButton:hover,
+.upload-video button:hover,
+.small-buttons:hover   {
   border-color: #5c3e51;
   border-width: 3px;
 }
 
 .smallButtons:active,
-.largeButton:hover  {
+.largeButton:hover,
+.upload-video button:active,
+.small-buttons:active  {
   background-color: #c670ab;
 }
-

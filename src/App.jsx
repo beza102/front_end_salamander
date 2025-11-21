@@ -24,7 +24,7 @@ export default function App() {
                     <Route path="/" element={<OpeningPage />} />
                     <Route path="/main" element={<MainPage />} />
                     <Route path="/select-video" element={<VideoSelection />} />
-                    <Route path="/preview" element={<PreviewProcessing />} />
+                    <Route path="/preview-processing" element={<PreviewProcessing />} />
                     <Route path="/processing/:jobId" element={<VideoProcessing />} />
                     
                     {/*Fallback for 404 */}
