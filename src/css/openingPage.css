@@ -1,0 +1,145 @@
+
+.opening-page-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; 
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
+    position: relative; 
+    overflow: hidden;
+
+
+
+}
+
+.salamander-image-corner {
+    position: absolute;
+    right: -150px; /* Adjust to move it more/less off-screen */
+    top: 29.5%;
+    transform: translateY(-50%); /* Vertically center the element */
+    width: 900px; /* Set a large width/height for the circle */
+    height: 900px;
+    border-radius: 50%; /* Makes it a perfect circle */
+    background-image: url('../assets/salamander_image.png'); /* Add image here */
+    background-size: cover; /* Ensures the image covers the entire circle */
+    background-position: center; /* Centers the image within the circle */
+    opacity: 0.4; /* Apply desired opacity */
+    z-index: 1; /* Keep it behind the main content */
+    pointer-events: none; /* Prevents it from interfering with clicks */
+}
+
+/* --- Main Title --- */
+.main-title {
+    font-size: 2.5rem;
+    color: #E6E0F8; 
+    margin-bottom: 30px; 
+    position: relative;
+    z-index: 20;
+}
+
+/* --- Card Container */
+.card-container {
+    display: grid;
+    gap: 30px; 
+    max-width: 1000px; 
+    width: 90%; 
+    position: relative; 
+    z-index: 20; 
+}
+
+/* Two Cards (Side-by-Side) */
+.card-container.two-cards {
+    grid-template-columns: repeat(2, 1fr); 
+}
+
+/* One Card (Centered) - Applied when no videos are processed */
+.card-container.one-card {
+    grid-template-columns: 1fr;
+    max-width: 500px; 
+}
+
+/* --- Shared Card Styling --- */
+.card {
+    background-color: rgba(255, 255, 255, 0.1); 
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    padding: 30px 40px;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+    color: #E6E0F8;
+    text-align: left;
+    height: fit-content; 
+}
+
+.card h2 {
+    color: #DF99C5; /* Pink accent color */
+    font-size: 1.5rem;
+    margin-top: 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(223, 153, 197, 0.3);
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* --- Processed Videos Card Specifics --- */
+.processed-videos-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.processed-videos-card li {
+    margin: 10px 0;
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+/* --- How it Works Card Specifics --- */
+.how-it-works-card p {
+    margin: 15px 0;
+    font-size: 1.05rem;
+    line-height: 1.5;
+}
+
+.quote {
+    margin-top: 30px;
+    padding: 10px 0 0 10px;
+    border-left: 3px solid #DF99C5;
+    font-style: italic;
+    font-size: 0.95rem;
+    color: #c0bdd3;
+}
+
+/* --- Button Styling --- */
+.buttons {
+    /* Use a reasonable top margin to separate it from the card(s) */
+    margin-top: 30px; 
+    margin-bottom: 20px; /* Add some space at the bottom if needed */
+    position:absolute; 
+    z-index: 20;
+}
+
+.process-new-video-button {
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    background-color: #DF99C5; 
+    color: #1a0f3d;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-weight: bold;
+}
+
+.process-new-video-button:hover {
+    background-color: #f7b4e0;
+}
+
+/* --- Media Queries for responsiveness --- */
+@media (max-width: 900px) {
+    .card-container.two-cards {
+        grid-template-columns: 1fr;
+    }
+}
