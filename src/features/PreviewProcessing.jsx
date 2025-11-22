@@ -2,10 +2,39 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer.jsx'; 
+import ActionButtons from '../components/Buttons';
 import '../css/previewProcessing.css';
 
-function VideoList({ videoFiles, onPreview, onSelect, onUpload }) {
+// ---------------- Video Row ----------------
+function VideoRow({ video, onDelete }) {
+    const handleOpenVideo = () => {
+        if (video instanceof File) {
+            const url = URL.createObjectURL(video);
+            window.open(url, "_blank");
+        } else {
+            alert(`Would open video: ${video}`);
+        }
+    };
 
+    return (
+    <div className="video-row">
+        <div className="video-name">
+            <span className="video-link" onClick={handleOpenVideo}>
+                {video.name || video}
+            </span>
+        </div>
+        <button className="small-buttons" onClick={() => onSelect(video)}>
+            Select
+        </button>
+        <button className="small-buttons" onClick={() => onDelete(video)}>
+            Delete
+        </button>
+    </div>
+);
+}
+
+// ---------------- Upload Button ----------------
+function UploadButton({ onUpload }) {
     const handleFileSelect = (event) => {
         const file = event.target.files[0];
         if (file) {
@@ -14,74 +43,58 @@ function VideoList({ videoFiles, onPreview, onSelect, onUpload }) {
     };
 
     return (
+        <div className="upload-video">
+            <input
+                type="file"
+                accept="video/*"
+                id="upload-video-input"
+                style={{ display: "none" }}
+                onChange={handleFileSelect}
+            />
+            <button onClick={() => document.getElementById("upload-video-input").click()}>
+                Upload Video
+            </button>
+        </div>
+    );
+}
+
+// ---------------- Video List ----------------
+function VideoList({ videoFiles, onUpload, onDelete }) {
+    return (
         <div className="video-list-container">
             <div className="video-list">
                 <h3>List of Available Videos</h3>
-                <div className='scroll-list'>
+                <div className="scroll-list">
                     {videoFiles.map((video, index) => (
-                        <div className="video-row" key={index}>
-                            <div className="video-name">{video}</div>
-                            <button 
-                                className="small-buttons" 
-                                onClick={() => onPreview(video)}
-                            >
-                                Preview
-                            </button>
-                            <button 
-                                className="small-buttons" 
-                                onClick={() => onSelect(video)}
-                            >
-                                Select
-                            </button>
-                        </div>
+                        <VideoRow key={index} video={video} onDelete={onDelete} />
                     ))}
                 </div>
-
-                <div className="upload-video">
-                    <input 
-                        type="file"
-                        accept="video/*"
-                        id="upload-video-input"
-                        style={{ display: "none" }}
-                        onChange={handleFileSelect}
-                    />
-
-                    <button
-                        onClick={() => document.getElementById("upload-video-input").click()}
-                    >
-                        Upload Video
-                    </button>
-                </div>
+                <UploadButton onUpload={onUpload} />
             </div>
         </div>
     );
 }
 
-function BinarizingImage({targetColor, threshold, setTargetColor, setThreshold}) {
+// ---------------- Binarizing Image ----------------
+function BinarizingImage({ targetColor, threshold, setTargetColor, setThreshold }) {
     return (
-        <div className='preview-content'>
-            {/* Main layout: Original + Binarized */}
+        <div className="preview-content">
             <div className="preview-frames">
-
                 <div className="preview-section">
                     <h3>Original Frame</h3>
                     <div className="frame-box">
                         <p>Original frame will appear here</p>
                     </div>
                 </div>
-
                 <div className="preview-section">
                     <h3>Binarized Frame</h3>
                     <div className="frame-box">
                         <p>Binarized image will appear here</p>
                     </div>
                 </div>
-
             </div>
 
-            {/* Controls */}
             <div className="controls">
-
                 <div className="control-group">
                     <label>Target Color</label>
                     <input
@@ -90,7 +103,6 @@ function BinarizingImage({targetColor, threshold, setTargetColor, setThreshold})
                         onChange={(e) => setTargetColor(e.target.value)}
                     />
                 </div>
-
                 <div className="control-group">
                     <label>Threshold: {threshold}</label>
                     <input
@@ -103,55 +115,41 @@ function BinarizingImage({targetColor, threshold, setTargetColor, setThreshold})
                 </div>
             </div>
         </div>
-    )
+    );
 }
 
+// ---------------- Main Page ----------------
 export default function PreviewProcessing() {
     const navigate = useNavigate();
 
-    // Temporary values
     const [threshold, setThreshold] = useState(50);
     const [targetColor, setTargetColor] = useState("#ff0000");
 
-    const videoFiles = [
-        "Ensatina eschscholtzii 04_04_25 (1).mov",
-        "Ensatina eschscholtzii 04_04_25.MP4",
-        "Ensatina eschscholtzii 04_04_25.mov",
+    const [videoFiles, setVideoFiles] = useState([
+        "Example exmple 04_04_25 (1).mov",
+        "Fake example 04_04_25.MP4",
+        "Salamander_salamander 04_04_25.mov",
         "GMT20241017-200208_Recording_1920×1080.mp4",
-        "Ensatina eschscholtzii 04_04_25 (1).mov",
-        "Ensatina eschscholtzii 04_04_25.MP4",
-        // "Ensatina eschscholtzii 04_04_25.mov",
-        // "GMT20241017-200208_Recording_1920×1080.mp4",
-        // "Ensatina eschscholtzii 04_04_25 (1).mov",
-        // "Ensatina eschscholtzii 04_04_25.MP4"
-    ];
+        "Another Example 04_04_25.mov",
+        "Salamander video example.mp4",
+    ]);
 
-    const handleGoBack = () => {
-        navigate(-1);
-    };
+    const handleProcessVideo = () => navigate('/processing/:jobId');
 
-    const handleProcessVideo = () => {
-        navigate('/processing/:jobId');
-    };
+    const handleUpload = (file) => setVideoFiles(prev => [...prev, file]);
 
-    const handlePreview = (video) => {
-        console.log("Previewing:", video);
-        // You can add loading of frames here later
-    };
+    const handleDelete = (video) => setVideoFiles(prev => prev.filter(v => v !== video));
 
     return (
         <div className="preview-container">
-
             <Header pageName="Preview Processing" />
 
             <div className="main-content">
-                {/* Video list */}
                 <VideoList 
                     videoFiles={videoFiles}
-                    onPreview={handlePreview}
+                    onUpload={handleUpload}
+                    onDelete={handleDelete}
                 />
-
-                {/* Binarizing image */}
                 <BinarizingImage 
                     threshold={threshold}
                     setThreshold={setThreshold}
@@ -160,21 +158,10 @@ export default function PreviewProcessing() {
                 />
             </div>
 
-            {/* Buttons */}
-            <div className="buttons">
-                <button 
-                    className="smallButtons"
-                    onClick={handleGoBack}
-                >
-                    Go Back
-                </button>
-                <button 
-                    className="smallButtons"
-                    onClick={handleProcessVideo}
-                >
-                    Process Video
-                </button>
-            </div>
+            <ActionButtons 
+                onNext={handleProcessVideo}
+                nextText="Process Video"
+            />
 
             <Footer />
         </div>

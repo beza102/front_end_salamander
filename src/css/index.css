@@ -66,17 +66,17 @@ footer {
   align-items: center;
   left: 50%;
   transform: translateX(-50%);
-} */
+}
 
-.smallButtons {
+.pinkButtons {
   background-color: #DF99C5;
   width: 300px;
   height: 42px;
   border-radius: 10px;
   border: 2px solid #DF99C5;
-} */
+}
 
-.largeButton {
+.pinkButton {
   background-color: #DF99C5;
   width: 500px;
   height: 42px;
@@ -84,16 +84,16 @@ footer {
   border: 2px solid #DF99C5;
 }
 
-.smallButtons:hover,
-.largeButton:hover,
+.pinkButtons:hover,
+.pinkButton:hover,
 .upload-video button:hover,
 .small-buttons:hover   {
   border-color: #5c3e51;
   border-width: 2px;
 }
 
-.smallButtons:active,
-.largeButton:hover,
+.pinkButtons:active,
+.pinkButton:hover,
 .upload-video button:active,
 .small-buttons:active  {
   background-color: #c670ab;

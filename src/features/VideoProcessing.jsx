@@ -1,15 +1,12 @@
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer.jsx'; 
+import ActionButtons from '../components/Buttons';
 
 export default function VideoProcessing(){
     const navigate = useNavigate();
 
-    const handleGoBack = () => {
-        navigate(-1);
-    };
-
-    const handleProcessVideo = () => {
+    const handleMain = () => {
         navigate('/');
     };
 
@@ -17,20 +14,10 @@ export default function VideoProcessing(){
         <div>
             <Header pageName="Processing Video" />
             <h1>Video Processing page</h1>
-            <div className="buttons">
-                    <button 
-                        className="smallButtons"
-                        onClick={handleGoBack}
-                    >
-                        Go Back
-                    </button>
-                    <button 
-                        className="smallButtons"
-                        onClick={handleProcessVideo}
-                    >
-                        Return to Main
-                    </button>
-                </div>
+            <ActionButtons 
+                onNext={handleMain}
+                nextText="Return to Main"
+            />
                 <Footer />
         </div>
     )

@@ -25,7 +25,7 @@ export default function OpeningPage() {
                 
                 <div className="buttons">
                     <button 
-                        className="largeButton"
+                        className="pinkButton"
                         onClick={handleGetStarted}
                     >
                         Get Started
