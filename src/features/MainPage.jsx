@@ -65,7 +65,7 @@ export default function MainPage() {
 
             <div className="buttons">
                 <button 
-                    className="largeButton process-new-video-button"
+                    className="pinkButton"
                     onClick={handleButtonClick}
                 >
                     {buttonText}
