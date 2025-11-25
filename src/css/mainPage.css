@@ -19,11 +19,11 @@ body {
 
 .salamander-image-corner {
     position: absolute;
-    right: -150px;
+    right: -180px;
     top: 40%;
     transform: translateY(-50%);
-    width: 750px;
-    height: 750px;
+    width: 650px;
+    height: 650px;
     border-radius: 50%;
     background-image: url('../assets/salamander_image.png');
     background-size: cover;
