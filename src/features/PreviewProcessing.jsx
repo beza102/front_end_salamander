@@ -5,8 +5,11 @@ import Footer from '../components/Footer.jsx';
 import ActionButtons from '../components/Buttons';
 import '../css/previewProcessing.css';
 
+// Backend URL from .env
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 // ---------------- Video Row ----------------
-function VideoRow({ video, onDelete }) {
+function VideoRow({ video, onDelete, onSelect, selectedVideo }) {
     const handleOpenVideo = () => {
         if (video instanceof File) {
             const url = URL.createObjectURL(video);
@@ -16,30 +19,30 @@ function VideoRow({ video, onDelete }) {
         }
     };
 
+    const isSelected = selectedVideo === video;
+
     return (
-    <div className="video-row">
-        <div className="video-name">
-            <span className="video-link" onClick={handleOpenVideo}>
-                {video.name || video}
-            </span>
+        <div className={`video-row ${isSelected ? "selected" : ""}`}>
+            <div className="video-name">
+                <span className="video-link" onClick={handleOpenVideo}>
+                    {video.name || video}
+                </span>
+            </div>
+            <button className="small-buttons" onClick={() => onSelect(video)}>
+                Select
+            </button>
+            <button className="small-buttons" onClick={() => onDelete(video)}>
+                Delete
+            </button>
         </div>
-        <button className="small-buttons" onClick={() => onSelect(video)}>
-            Select
-        </button>
-        <button className="small-buttons" onClick={() => onDelete(video)}>
-            Delete
-        </button>
-    </div>
-);
+    );
 }
 
 // ---------------- Upload Button ----------------
 function UploadButton({ onUpload }) {
     const handleFileSelect = (event) => {
         const file = event.target.files[0];
-        if (file) {
-            onUpload(file);
-        }
+        if (file) onUpload(file);
     };
 
     return (
@@ -59,14 +62,20 @@ function UploadButton({ onUpload }) {
 }
 
 // ---------------- Video List ----------------
-function VideoList({ videoFiles, onUpload, onDelete }) {
+function VideoList({ videoFiles, onUpload, onDelete, onSelect, selectedVideo }) {
     return (
         <div className="video-list-container">
             <div className="video-list">
                 <h3>List of Available Videos</h3>
                 <div className="scroll-list">
                     {videoFiles.map((video, index) => (
-                        <VideoRow key={index} video={video} onDelete={onDelete} />
+                        <VideoRow
+                            key={index}
+                            video={video}
+                            onDelete={onDelete}
+                            onSelect={onSelect}
+                            selectedVideo={selectedVideo}
+                        />
                     ))}
                 </div>
                 <UploadButton onUpload={onUpload} />
@@ -118,12 +127,13 @@ function BinarizingImage({ targetColor, threshold, setTargetColor, setThreshold 
     );
 }
 
-// ---------------- Main Page ----------------
+// ---------------- Main Component ----------------
 export default function PreviewProcessing() {
     const navigate = useNavigate();
 
     const [threshold, setThreshold] = useState(50);
     const [targetColor, setTargetColor] = useState("#ff0000");
+    const [selectedVideo, setSelectedVideo] = useState(null);
 
     const [videoFiles, setVideoFiles] = useState([
         "Example exmple 04_04_25 (1).mov",
@@ -134,10 +144,42 @@ export default function PreviewProcessing() {
         "Salamander video example.mp4",
     ]);
 
-    const handleProcessVideo = () => navigate('/processing/:jobId');
+    // ---------------- Process Video ----------------
+    const handleProcessVideo = async () => {
+        if (!selectedVideo) {
+            alert("Please select a video first!");
+            return;
+        }
+
+        const inputPath = selectedVideo instanceof File
+            ? selectedVideo.name
+            : selectedVideo;
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/process/start`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    inputPath: `${API_BASE_URL}/videos/${inputPath}`,
+                    targetColor,
+                    threshold
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                navigate(`/processing/${data.jobId}`);
+            } else {
+                alert("Error starting job: " + data.error);
+            }
+        } catch (err) {
+            console.error("Failed to start job:", err);
+            alert("Failed to start job. Check console for details.");
+        }
+    };
 
     const handleUpload = (file) => setVideoFiles(prev => [...prev, file]);
-
     const handleDelete = (video) => setVideoFiles(prev => prev.filter(v => v !== video));
 
     return (
@@ -145,12 +187,14 @@ export default function PreviewProcessing() {
             <Header pageName="Preview Processing" />
 
             <div className="main-content">
-                <VideoList 
+                <VideoList
                     videoFiles={videoFiles}
                     onUpload={handleUpload}
                     onDelete={handleDelete}
+                    onSelect={setSelectedVideo}
+                    selectedVideo={selectedVideo}
                 />
-                <BinarizingImage 
+                <BinarizingImage
                     threshold={threshold}
                     setThreshold={setThreshold}
                     targetColor={targetColor}
@@ -158,7 +202,7 @@ export default function PreviewProcessing() {
                 />
             </div>
 
-            <ActionButtons 
+            <ActionButtons
                 onNext={handleProcessVideo}
                 nextText="Process Video"
             />
