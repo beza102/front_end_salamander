@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer.jsx'; 
 import ActionButtons from '../components/Buttons';
 import '../css/previewProcessing.css';
 
-// Backend URL from .env
+// Backend URL
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 // ---------------- Video Row ----------------
@@ -42,7 +42,9 @@ function VideoRow({ video, onDelete, onSelect, selectedVideo }) {
 function UploadButton({ onUpload }) {
     const handleFileSelect = (event) => {
         const file = event.target.files[0];
-        if (file) onUpload(file);
+        if (file) {
+            onUpload(file);
+        }
     };
 
     return (
@@ -85,14 +87,31 @@ function VideoList({ videoFiles, onUpload, onDelete, onSelect, selectedVideo }) 
 }
 
 // ---------------- Binarizing Image ----------------
-function BinarizingImage({ targetColor, threshold, setTargetColor, setThreshold }) {
+function BinarizingImage({ targetColor, threshold, setTargetColor, setThreshold, selectedVideo }) {
+    const [thumbnailUrl, setThumbnailUrl] = useState(null);
+
+    useEffect(() => {
+        if (!selectedVideo) return;
+
+        if (selectedVideo instanceof File) {
+            const url = URL.createObjectURL(selectedVideo);
+            setThumbnailUrl(url);
+        } else {
+            setThumbnailUrl(`${import.meta.env.VITE_API_BASE_URL}/videos/${selectedVideo}`);
+        }
+    }, [selectedVideo]);
+
     return (
         <div className="preview-content">
             <div className="preview-frames">
                 <div className="preview-section">
                     <h3>Original Frame</h3>
                     <div className="frame-box">
-                        <p>Original frame will appear here</p>
+                        {thumbnailUrl ? (
+                            <video src={thumbnailUrl} controls width="300" />
+                        ) : (
+                            <p>Original frame will appear here</p>
+                        )}
                     </div>
                 </div>
                 <div className="preview-section">
@@ -127,14 +146,13 @@ function BinarizingImage({ targetColor, threshold, setTargetColor, setThreshold 
     );
 }
 
-// ---------------- Main Component ----------------
+// ---------------- Main Page ----------------
 export default function PreviewProcessing() {
     const navigate = useNavigate();
 
     const [threshold, setThreshold] = useState(50);
     const [targetColor, setTargetColor] = useState("#ff0000");
     const [selectedVideo, setSelectedVideo] = useState(null);
-
     const [videoFiles, setVideoFiles] = useState([
         "Example exmple 04_04_25 (1).mov",
         "Fake example 04_04_25.MP4",
@@ -144,23 +162,20 @@ export default function PreviewProcessing() {
         "Salamander video example.mp4",
     ]);
 
-    // ---------------- Process Video ----------------
     const handleProcessVideo = async () => {
         if (!selectedVideo) {
             alert("Please select a video first!");
             return;
         }
 
-        const inputPath = selectedVideo instanceof File
-            ? selectedVideo.name
-            : selectedVideo;
+        const inputPath = selectedVideo instanceof File ? selectedVideo.name : selectedVideo;
 
         try {
             const response = await fetch(`${API_BASE_URL}/process/start`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    inputPath: `${API_BASE_URL}/videos/${inputPath}`,
+                    inputPath: inputPath, // adjust if backend expects full path
                     targetColor,
                     threshold
                 })
@@ -199,6 +214,7 @@ export default function PreviewProcessing() {
                     setThreshold={setThreshold}
                     targetColor={targetColor}
                     setTargetColor={setTargetColor}
+                    selectedVideo={selectedVideo}
                 />
             </div>
 
