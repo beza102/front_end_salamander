@@ -17,9 +17,10 @@ export default function MainPage() {
 
     const showProcessedVideos = processedVideos && processedVideos.length > 0;
     
-    const mainTitle = showProcessedVideos 
-        ? "Salamander Tracker" 
-        : "Welcome to Salamander Tracker!";
+   const mainTitle = showProcessedVideos 
+    ? "Salamander Tracker" 
+    : <>Welcome to <br /> Salamander Tracker!</>;
+
     
     const buttonText = showProcessedVideos 
         ? "Process New Video" 

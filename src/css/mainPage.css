@@ -39,6 +39,7 @@ body {
     margin-bottom: 30px; 
     position: relative;
     z-index: 20;
+    text-align: center; 
 }
 
 /* --- Card Container (Handles layout for one or two cards) --- */
