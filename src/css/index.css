@@ -60,9 +60,8 @@ footer {
 .buttons {
   display: flex;
   position: fixed;
-  bottom: 0;
-  margin-bottom: 3%;
-  gap: 5%;
+  bottom: 2%;
+  gap: 1%;
   align-items: center;
   left: 50%;
   transform: translateX(-50%);
