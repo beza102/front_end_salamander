@@ -56,10 +56,20 @@ export default function MainPage() {
 
                 {/* RIGHT CARD: How It Works */}
                 <div className="card how-it-works-card">
-                    <h2>How this Works</h2>
-                    {howItWorksText.map((text, index) => (
-                        <p key={index}>{text}</p>
-                    ))}
+                    <div className='left-column'>
+                        <h2>What this is for</h2>
+                        <p>
+                            This program tracks a salamander (or other animals) in a video and records its 
+                            movement coordinates at each frame per second. It outputs a dataset that can 
+                            be used for visualization, research, or further analysis.
+                        </p>
+                    </div>
+                    <div>
+                        <h2>How this works</h2>
+                        {howItWorksText.map((text, index) => (
+                            <p key={index}>{text}</p>
+                        ))}
+                    </div>
                 </div>
 
             </main>

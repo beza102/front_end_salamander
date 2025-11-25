@@ -16,9 +16,13 @@ body {
     margin: 0;
 }
 
+h2 {
+    font-weight: 100;
+}
+
 .salamander-image-corner {
     position: absolute;
-    right: -180px;
+    right: -250px;
     top: 40%;
     transform: translateY(-50%);
     width: 650px;
@@ -35,7 +39,8 @@ body {
 /* --- Main Title --- */
 .main-title {
     font-size: 2.5rem;
-    color: #E6E0F8; 
+    font-family: El Messiri;
+    color: #DF99C5;
     margin-bottom: 30px; 
     position: relative;
     z-index: 20;
@@ -60,28 +65,28 @@ body {
 /* One Card (Centered) - Applied when no videos are processed */
 .card-container.one-card {
     grid-template-columns: 1fr;
-    max-width: 500px; 
+    max-width: 60%; 
 }
 
 /* --- Shared Card Styling (Glassmorphism Effect) --- */
 .card {
-    background-color: rgba(255, 255, 255, 0.1); 
+    background-color: rgba(255, 255, 255, 0.493); 
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
     padding: 30px 40px;
     border-radius: 12px;
     
-    color: #E6E0F8;
+    color: black;
     text-align: left;
     height: fit-content; 
 }
 
 .card h2 {
-    color: #DF99C5; /* Pink accent color */
+    color: black; /* Pink accent color */
     font-size: 1.5rem;
     margin-top: 0;
     padding-bottom: 10px;
-    border-bottom: 1px solid rgba(223, 153, 197, 0.3);
+    border-bottom: 1px solid #1a0f3d67;
     text-align: center;
     margin-bottom: 20px;
 }
@@ -100,10 +105,23 @@ body {
 }
 
 /* --- How it Works Card Specifics --- */
+.how-it-works-card {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 10%;
+    height: 70%;
+    margin-bottom: 5%;
+}
+
 .how-it-works-card p {
     margin: 15px 0;
     font-size: 1.05rem;
     line-height: 1.5;
+}
+
+.left-column {
+    width: 75%;
 }
 
 .quote {
@@ -127,13 +145,13 @@ body {
 .process-new-video-button {
     padding: 15px 30px;
     font-size: 1.2rem;
-    background-color: #DF99C5; 
+    background-color: #1a0f3d; 
     color: #1a0f3d;
     border: none;
     border-radius: 8px;
     cursor: pointer;
     transition: background-color 0.3s;
-    font-weight: bold;
+
 }
 
 .process-new-video-button:hover {
