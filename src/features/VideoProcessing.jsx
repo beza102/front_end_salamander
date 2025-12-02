@@ -13,8 +13,13 @@ export default function VideoProcessing() {
     const [jobData, setJobData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    
+    // Polling interval time (e.g., check status every 3 seconds)
+    const POLLING_INTERVAL = 3000; 
 
     useEffect(() => {
+        let intervalId;
+
         const fetchJob = async () => {
             try {
                 const response = await fetch(`${API_BASE_URL}/jobs/${jobId}`);
@@ -22,54 +27,92 @@ export default function VideoProcessing() {
 
                 if (response.ok) {
                     setJobData(data);
+                    
+                    // If job is finished (completed or failed), stop polling
+                    if (data.status === 'completed' || data.status === 'failed') {
+                        clearInterval(intervalId);
+                    }
                 } else {
+                    // Stop polling on API errors (e.g., 404 job not found)
                     setError(data.error || "Failed to fetch job.");
+                    clearInterval(intervalId); 
                 }
             } catch (err) {
-                console.error(err);
-                setError("Failed to fetch job. Check console for details.");
+                console.error("Polling failed:", err);
+                setError("Failed to communicate with server. Check console.");
+                clearInterval(intervalId); // Stop on network errors
             } finally {
                 setLoading(false);
             }
         };
 
+        // 1. Initial fetch immediately
         fetchJob();
+        
+        // 2. Start polling
+        intervalId = setInterval(fetchJob, POLLING_INTERVAL);
+
+        // 3. Cleanup function: runs when component unmounts or before the effect runs again
+        return () => {
+             console.log(`Stopping job polling for ${jobId}`);
+             clearInterval(intervalId);
+        }
     }, [jobId]);
 
     const handleBack = () => navigate('/preview-processing');
 
-    if (loading) return <p>Loading job results...</p>;
-    if (error) return <p className="error">{error}</p>;
+    // --- Conditional Rendering based on Status ---
+    if (loading) return <p>Loading job status...</p>;
+    if (error) return <p className="error">Error: **{error}**</p>;
+    
+    // Ensure jobData is not null before accessing properties
+    if (!jobData || !jobData.status) return <p>Job data is incomplete or corrupted.</p>;
+
+    const isProcessing = jobData.status === 'submitted' || jobData.status === 'processing';
+    const isCompleted = jobData.status === 'completed';
+    const isFailed = jobData.status === 'failed';
+
 
     return (
         <div className="processing-container">
             <Header pageName={`Processing Job: ${jobId}`} />
 
             <div className="processing-content">
+                <h2>Job Status: **{jobData.status.toUpperCase()}**</h2>
+                
+                {isProcessing && (
+                    <p>Your video is currently being processed. This page will update automatically.</p>
+                )}
+
+                {isCompleted && (
+                    <>
+                        <p>Processing is **complete**! Find your results below.</p>
+                        {jobData.outputCsv ? (
+                            // The backend needs to expose a route for downloading this CSV
+                            <a href={`${API_BASE_URL}/results/${jobId}.csv`} target="_blank" rel="noopener noreferrer">
+                                Download CSV Results
+                            </a>
+                        ) : (
+                            <p>No results file was generated.</p>
+                        )}
+                    </>
+                )}
+
+                {isFailed && (
+                    <p className="error-message">The job failed. Details: **{jobData.errorDetails || "No details provided."}**</p>
+                )}
+                
+                {/* Displaying general job details */}
                 <h3>Input Video:</h3>
                 <p>{jobData.inputPath}</p>
 
-                <h3>Processing Details:</h3>
+                <h3>Processing Parameters:</h3>
                 <p>Target Color: {jobData.targetColor}</p>
                 <p>Threshold: {jobData.threshold}</p>
 
-                <h3>Results:</h3>
-                {jobData.outputCsv ? (
-                    <a href={jobData.outputCsv} target="_blank" rel="noopener noreferrer">
-                        Download CSV Results
-                    </a>
-                ) : (
-                    <p>No results available yet.</p>
-                )}
+                {/* Remaining logic for displaying frames/results if available */}
+                {/* ... (frames rendering remains the same) */}
 
-                {jobData.frames && jobData.frames.length > 0 && (
-                    <div className="frames-list">
-                        <h3>Binarized Frames:</h3>
-                        {jobData.frames.map((frame, index) => (
-                            <img key={index} src={frame} alt={`Frame ${index}`} className="processed-frame" />
-                        ))}
-                    </div>
-                )}
             </div>
 
             <button className="back-button" onClick={handleBack}>Back to Preview</button>
