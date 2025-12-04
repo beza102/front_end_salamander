@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef} from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import Footer from "../components/Footer.jsx";
@@ -107,6 +107,7 @@ function VideoList({ videoFiles, onUpload, onDelete, onSelect, selectedVideo }) 
 function BinarizingImage({ targetColor, threshold, setTargetColor, setThreshold, selectedVideo }) {
   const [thumbnailUrl, setThumbnailUrl] = useState(null);
   const [binarizedUrl, setBinarizedUrl] = useState(null);
+  const canvasRef = useRef(null);
 
   // Load original thumbnail
   useEffect(() => {
@@ -116,15 +117,14 @@ function BinarizingImage({ targetColor, threshold, setTargetColor, setThreshold,
 
   // Load binarized image whenever targetColor, threshold, or selectedVideo changes
   useEffect(() => {
-    if (!selectedVideo) return;
-    if (!targetColor) return;
+    if (!selectedVideo || !targetColor) return;
 
     const fetchBinarized = async () => {
       try {
         const params = new URLSearchParams({
           filename: selectedVideo,
-          color: targetColor.replace("#", ""), // send hex without #
-          threshold
+          color: targetColor.replace("#", ""),
+          threshold,
         });
         const res = await fetch(`${API_BASE_URL}/process/binarize-preview?${params.toString()}`);
         const data = await res.json();
@@ -140,15 +140,51 @@ function BinarizingImage({ targetColor, threshold, setTargetColor, setThreshold,
     fetchBinarized();
   }, [targetColor, threshold, selectedVideo]);
 
+  // Draw original thumbnail on canvas
+  useEffect(() => {
+    if (!thumbnailUrl || !canvasRef.current) return;
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    const img = new Image();
+    img.src = thumbnailUrl;
+    img.crossOrigin = "anonymous";
+    img.onload = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    };
+  }, [thumbnailUrl]);
+
+  // Pick color from canvas
+  const handlePickColor = (e) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const ctx = canvas.getContext("2d");
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const pixel = ctx.getImageData(x, y, 1, 1).data;
+    const hex = `#${((1 << 24) + (pixel[0] << 16) + (pixel[1] << 8) + pixel[2]).toString(16).slice(1)}`;
+    setTargetColor(hex);
+  };
+
   return (
     <div className="preview-content">
       <div className="preview-frames">
-        
         <div className="preview-section">
           <h3>Original Frame</h3>
           <div className="frame-box">
             {thumbnailUrl ? (
-              <img src={thumbnailUrl} alt="thumbnail" width="300" />
+              <canvas
+                ref={canvasRef}
+                width={300}
+                height={300}
+                style={{ cursor: "crosshair" }}
+                onClick={handlePickColor} // single click pick
+                onMouseMove={(e) => {
+                  if (e.buttons === 1) handlePickColor(e); // drag-to-pick
+                }}
+              />
             ) : (
               <p>Original frame will appear here</p>
             )}
@@ -165,7 +201,6 @@ function BinarizingImage({ targetColor, threshold, setTargetColor, setThreshold,
             )}
           </div>
         </div>
-
       </div>
 
       <div className="controls">
