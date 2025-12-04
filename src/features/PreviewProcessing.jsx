@@ -180,9 +180,9 @@ function BinarizingImage({ targetColor, threshold, setTargetColor, setThreshold,
                 width={300}
                 height={300}
                 style={{ cursor: "crosshair" }}
-                onClick={handlePickColor} // single click pick
+                onClick={handlePickColor}
                 onMouseMove={(e) => {
-                  if (e.buttons === 1) handlePickColor(e); // drag-to-pick
+                  if (e.buttons === 1) handlePickColor(e);
                 }}
               />
             ) : (
@@ -237,6 +237,7 @@ export default function PreviewProcessing() {
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [videoFiles, setVideoFiles] = useState([]);
 
+  // Fetch video list on mount
   useEffect(() => {
     const fetchVideoList = async () => {
       try {
@@ -258,13 +259,37 @@ export default function PreviewProcessing() {
     setVideoFiles((prev) => prev.filter((v) => v !== video));
   };
 
-  const handleProcessVideo = () => {
+  // ✅ START PROCESSING AND GET REAL JOB ID
+  const handleProcessVideo = async () => {
     if (!selectedVideo) {
-      alert("Select a video first");
-      return;
+        alert("Select a video first");
+        return;
     }
-    navigate(`/processing/12345`);
-  };
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/process/start`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                inputPath: selectedVideo,
+                targetColor,
+                threshold
+            }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.jobId) {
+            navigate(`/processing/${data.jobId}`);
+        } else {
+            alert(`Failed to start processing: ${data.error || "Unknown error"}`);
+        }
+    } catch (err) {
+        console.error("Error starting processing job:", err);
+        alert("Network error starting job. Check console.");
+    }
+};
+
 
   return (
     <div className="preview-container">
