@@ -233,7 +233,7 @@ export default function PreviewProcessing() {
   const navigate = useNavigate();
 
   const [threshold, setThreshold] = useState(50);
-  const [targetColor, setTargetColor] = useState("#ff0000");
+  const [targetColor, setTargetColor] = useState("#674ab4");
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [videoFiles, setVideoFiles] = useState([]);
 
