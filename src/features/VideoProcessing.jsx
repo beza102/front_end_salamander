@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer.jsx';
+import "../css/videoProcessing.css";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -69,49 +70,56 @@ export default function VideoProcessing() {
 
     return (
         <div className="processing-container">
-            <Header pageName={`Processing Job: ${jobId}`} />
+            <Header pageName="Processing Video" />
 
-            <div className="processing-content">
-                <h2>Job Status: **{jobData.status.toUpperCase()}**</h2>
+            <div className="processing-title-box">
+                <h2>Overview of Job: {jobId}</h2>
+            </div>
 
-                {isProcessing && (
-                    <p>Your video is currently being processed. This page will update automatically.</p>
-                )}
+            <div className="processing-status-box">
+                <p><strong>Status:</strong> {jobData.status}</p>
+
+        {isProcessing && (
+            <>
+                <p><strong>Status:</strong> {jobData.status}</p>
+                <p>Processing... this page is auto-refreshing every few seconds.</p>
+
+                {/* Progress Bar */}
+                <div className="progress-bar-container">
+                    <div
+                        className="progress-bar-fill"
+                        style={{ width: `${jobData.progress || 5}%` }}
+                    />
+                </div>
+
+                <p className="progress-label">{jobData.progress || 5}% Complete</p>
+            </>
+        )}
 
                 {isCompleted && (
                     <>
-                        <p>Processing is **complete**! Find your results below.</p>
-                        {jobData.outputCsv ? (
-                            <a
-                                href={`${API_BASE_URL}/results/${jobId}.csv`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                Download CSV Results
-                            </a>
-                        ) : (
-                            <p>No results file was generated.</p>
-                        )}
+                        <p>Done!</p>
+                        <p><strong>Result:</strong></p>
+                        
+                        <a
+                            href={`${API_BASE_URL}/process/${jobId}/result`}
+                            download
+                        >
+                            Download Result CSV
+                        </a>
                     </>
                 )}
 
                 {isFailed && (
-                    <p className="error-message">
-                        The job failed. Details: **{jobData.errorDetails || 'No details provided.'}**
-                    </p>
+                    <p className="error-message">The job failed: {jobData.errorDetails || ""}</p>
                 )}
-
-                <h3>Input Video:</h3>
-                <p>{jobData.inputPath}</p>
-
-                <h3>Processing Parameters:</h3>
-                <p>Target Color: {jobData.targetColor}</p>
-                <p>Threshold: {jobData.threshold}</p>
             </div>
 
-            <button className="back-button" onClick={handleBack}>
-                Back to Preview
-            </button>
+            <div className="processing-buttons">
+                <button onClick={() => navigate("/preview-processing")}>Select New Video</button>
+                <button onClick={() => navigate("/")}>Go to Main</button>
+            </div>
+
             <Footer />
         </div>
     );
