@@ -177,8 +177,8 @@ function BinarizingImage({ targetColor, threshold, setTargetColor, setThreshold,
             {thumbnailUrl ? (
               <canvas
                 ref={canvasRef}
-                width={300}
-                height={300}
+                // width={300}
+                // height={300}
                 style={{ cursor: "crosshair" }}
                 onClick={handlePickColor}
                 onMouseMove={(e) => {
