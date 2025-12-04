@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef} from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import Footer from "../components/Footer.jsx";
@@ -106,11 +106,39 @@ function VideoList({ videoFiles, onUpload, onDelete, onSelect, selectedVideo }) 
 // ---------- Frame + Preview ----------
 function BinarizingImage({ targetColor, threshold, setTargetColor, setThreshold, selectedVideo }) {
   const [thumbnailUrl, setThumbnailUrl] = useState(null);
+  const [binarizedUrl, setBinarizedUrl] = useState(null);
 
+  // Load original thumbnail
   useEffect(() => {
     if (!selectedVideo) return;
     setThumbnailUrl(`${API_BASE_URL}/process/thumbnail/${selectedVideo}`);
   }, [selectedVideo]);
+
+  // Load binarized image whenever targetColor, threshold, or selectedVideo changes
+  useEffect(() => {
+    if (!selectedVideo) return;
+    if (!targetColor) return;
+
+    const fetchBinarized = async () => {
+      try {
+        const params = new URLSearchParams({
+          filename: selectedVideo,
+          color: targetColor.replace("#", ""), // send hex without #
+          threshold
+        });
+        const res = await fetch(`${API_BASE_URL}/process/binarize-preview?${params.toString()}`);
+        const data = await res.json();
+        if (res.ok && data.image) {
+          setBinarizedUrl(`data:image/png;base64,${data.image}`);
+        }
+      } catch (err) {
+        console.error("Error fetching binarized preview", err);
+        setBinarizedUrl(null);
+      }
+    };
+
+    fetchBinarized();
+  }, [targetColor, threshold, selectedVideo]);
 
   return (
     <div className="preview-content">
@@ -130,10 +158,10 @@ function BinarizingImage({ targetColor, threshold, setTargetColor, setThreshold,
         <div className="preview-section">
           <h3>Binarized Preview</h3>
           <div className="frame-box">
-            {thumbnailUrl ? (
-              <p>Binarized preview will display here (after backend is ready)</p>
+            {binarizedUrl ? (
+              <img src={binarizedUrl} alt="binarized preview" width="300" />
             ) : (
-              <p>Adjust settings to generate preview</p>
+              <p>Adjust target color and threshold to generate preview</p>
             )}
           </div>
         </div>
