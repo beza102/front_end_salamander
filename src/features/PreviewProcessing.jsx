@@ -109,6 +109,8 @@ function BinarizingImage({ targetColor, threshold, setTargetColor, setThreshold,
   const [binarizedUrl, setBinarizedUrl] = useState(null);
   const canvasRef = useRef(null);
 
+  const FRAME_SIZE = 250; // matches your .frame-box height
+
   // Load original thumbnail
   useEffect(() => {
     if (!selectedVideo) return;
@@ -145,12 +147,17 @@ function BinarizingImage({ targetColor, threshold, setTargetColor, setThreshold,
     if (!thumbnailUrl || !canvasRef.current) return;
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
+
     const img = new Image();
     img.src = thumbnailUrl;
     img.crossOrigin = "anonymous";
     img.onload = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      canvas.width = FRAME_SIZE;
+      canvas.height = FRAME_SIZE;
+
+      // Stretch image to fill square (can crop if needed)
+      ctx.clearRect(0, 0, FRAME_SIZE, FRAME_SIZE);
+      ctx.drawImage(img, 0, 0, FRAME_SIZE, FRAME_SIZE);
     };
   }, [thumbnailUrl]);
 
@@ -164,7 +171,9 @@ function BinarizingImage({ targetColor, threshold, setTargetColor, setThreshold,
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
     const pixel = ctx.getImageData(x, y, 1, 1).data;
-    const hex = `#${((1 << 24) + (pixel[0] << 16) + (pixel[1] << 8) + pixel[2]).toString(16).slice(1)}`;
+    const hex = `#${((1 << 24) + (pixel[0] << 16) + (pixel[1] << 8) + pixel[2])
+      .toString(16)
+      .slice(1)}`;
     setTargetColor(hex);
   };
 
@@ -177,9 +186,7 @@ function BinarizingImage({ targetColor, threshold, setTargetColor, setThreshold,
             {thumbnailUrl ? (
               <canvas
                 ref={canvasRef}
-                // width={300}
-                // height={300}
-                style={{ cursor: "crosshair" }}
+                style={{ cursor: "crosshair", width: "100%", height: "100%" }}
                 onClick={handlePickColor}
                 onMouseMove={(e) => {
                   if (e.buttons === 1) handlePickColor(e);
@@ -195,7 +202,16 @@ function BinarizingImage({ targetColor, threshold, setTargetColor, setThreshold,
           <h3>Binarized Preview</h3>
           <div className="frame-box">
             {binarizedUrl ? (
-              <img src={binarizedUrl} alt="binarized preview" width="300" />
+              <img
+                src={binarizedUrl}
+                alt="binarized preview"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover", // fills the frame
+                  borderRadius: "12px",
+                }}
+              />
             ) : (
               <p>Adjust target color and threshold to generate preview</p>
             )}
@@ -227,6 +243,7 @@ function BinarizingImage({ targetColor, threshold, setTargetColor, setThreshold,
     </div>
   );
 }
+
 
 // ---------- MAIN PAGE ----------
 export default function PreviewProcessing() {

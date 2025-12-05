@@ -104,13 +104,23 @@
 
 .frame-box {
     height: 250px;
+    width: 250px; /* make it square */
     border: 2px solid #DF99C5;
     border-radius: 12px;
     background-color: rgba(255,255,255,0.05);
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow: hidden; /* ensures content stays inside */
 }
+
+.frame-box img,
+.frame-box canvas {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain; /* preserves aspect ratio inside square */
+}
+
 
 /*---------------Controls---------------*/
 .controls {
