@@ -14,8 +14,7 @@ export default function VideoProcessing() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // Polling interval (ms)
-    const POLLING_INTERVAL = 3000;
+    const POLLING_INTERVAL = 3000; // 3 seconds
 
     useEffect(() => {
         let intervalId;
@@ -46,27 +45,26 @@ export default function VideoProcessing() {
             }
         };
 
-        // Initial fetch
-        fetchJob();
-
-        // Start polling
+        fetchJob(); // initial fetch
         intervalId = setInterval(fetchJob, POLLING_INTERVAL);
 
-        return () => {
-            console.log(`Stopping job polling for ${jobId}`);
-            clearInterval(intervalId);
-        };
+        return () => clearInterval(intervalId);
     }, [jobId]);
 
     const handleBack = () => navigate('/preview-processing');
 
     if (loading) return <p>Loading job status...</p>;
-    if (error) return <p className="error">Error: **{error}**</p>;
-    if (!jobData || !jobData.status) return <p>Job data is incomplete or corrupted.</p>;
+    if (error) return <p className="error">Error: {error}</p>;
+    if (!jobData) return <p>Job data is unavailable. Try refreshing.</p>;
 
-    const isProcessing = jobData.status === 'submitted' || jobData.status === 'processing';
-    const isCompleted = jobData.status === 'completed';
-    const isFailed = jobData.status === 'failed';
+    // Use fallback values if progress/status are temporarily missing
+    const status = jobData.status || 'submitted';
+    const progress = typeof jobData.progress === 'number' ? jobData.progress : 0;
+    const resultCsv = jobData.resultCsv || null;
+
+    const isProcessing = status === 'submitted' || status === 'processing';
+    const isCompleted = status === 'completed';
+    const isFailed = status === 'failed';
 
     return (
         <div className="processing-container">
@@ -77,34 +75,27 @@ export default function VideoProcessing() {
             </div>
 
             <div className="processing-status-box">
-                <p><strong>Status:</strong> {jobData.status}</p>
+                <p><strong>Status:</strong> {status}</p>
 
-        {isProcessing && (
-            <>
-                <p><strong>Status:</strong> {jobData.status}</p>
-                <p>Processing... this page is auto-refreshing every few seconds.</p>
+                {isProcessing && (
+                    <>
+                        <p>Processing... this page auto-refreshes every few seconds.</p>
 
-                {/* Progress Bar */}
-                <div className="progress-bar-container">
-                    <div
-                        className="progress-bar-fill"
-                        style={{ width: `${jobData.progress || 5}%` }}
-                    />
-                </div>
+                        <div className="progress-bar-container">
+                            <div
+                                className="progress-bar-fill"
+                                style={{ width: `${progress}%` }}
+                            />
+                        </div>
+                        <p className="progress-label">{progress}% Complete</p>
+                    </>
+                )}
 
-                <p className="progress-label">{jobData.progress || 5}% Complete</p>
-            </>
-        )}
-
-                {isCompleted && (
+                {isCompleted && resultCsv && (
                     <>
                         <p>Done!</p>
                         <p><strong>Result:</strong></p>
-                        
-                        <a
-                            href={`${API_BASE_URL}/process/${jobId}/result`}
-                            download
-                        >
+                        <a href={`${API_BASE_URL}${resultCsv}`} download>
                             Download Result CSV
                         </a>
                     </>
