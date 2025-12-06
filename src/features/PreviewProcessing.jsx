@@ -183,7 +183,7 @@ function BinarizingImage({ targetColor, threshold, setTargetColor, setThreshold,
         <div className="preview-section">
           <h3>Original Frame</h3>
           <div className="frame-box">
-            {thumbnailUrl ? (
+            {thumbnailUrl  ? (
               <canvas
                 ref={canvasRef}
                 style={{ cursor: "crosshair", width: "100%", height: "100%" }}
@@ -322,11 +322,11 @@ export default function PreviewProcessing() {
         />
 
         <BinarizingImage
-          threshold={threshold}
-          setThreshold={setThreshold}
-          targetColor={targetColor}
-          setTargetColor={setTargetColor}
-          selectedVideo={selectedVideo}
+            threshold={threshold}
+            setThreshold={setThreshold}
+            targetColor={targetColor}
+            setTargetColor={setTargetColor}
+            selectedVideo={selectedVideo}
         />
       </div>
 

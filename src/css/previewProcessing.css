@@ -23,8 +23,7 @@
     padding-bottom: 6%;
     display: flex;
     flex-direction: column;
-    }
-
+}
 .scroll-list {
     max-height: 270px;
     overflow-y: auto;
@@ -91,15 +90,17 @@
 
 .preview-frames {
     display: flex;
-    justify-content: space-between;
-    gap: 2rem;
+    justify-content: center;
+    gap: 15%;
     background-color: rgba(124, 103, 189, 0.1);
     border-radius: 10px;
     padding: 1% 3% 3% 3%;
 }
 
 .preview-section {
-    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .frame-box {
@@ -113,6 +114,15 @@
     align-items: center;
     overflow: hidden; /* ensures content stays inside */
 }
+
+.frame-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+  display: block;
+}
+
 
 .frame-box img,
 .frame-box canvas {
