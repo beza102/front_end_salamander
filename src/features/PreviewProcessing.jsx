@@ -105,17 +105,13 @@ function VideoList({ videoFiles, onUpload, onDelete, onSelect, selectedVideo }) 
 
 // ---------- Frame + Preview ----------
 function BinarizingImage({ targetColor, threshold, setTargetColor, setThreshold, selectedVideo }) {
-  const [thumbnailUrl, setThumbnailUrl] = useState(null);
   const [binarizedUrl, setBinarizedUrl] = useState(null);
   const canvasRef = useRef(null);
 
   const FRAME_SIZE = 250; // matches your .frame-box height
 
-  // Load original thumbnail
-  useEffect(() => {
-    if (!selectedVideo) return;
-    setThumbnailUrl(`${API_BASE_URL}/process/thumbnail/${selectedVideo}`);
-  }, [selectedVideo]);
+  // Derived thumbnail URL (no useEffect needed)
+  const thumbnailUrl = selectedVideo ? `${API_BASE_URL}/process/thumbnail/${selectedVideo}` : null;
 
   // Load binarized image whenever targetColor, threshold, or selectedVideo changes
   useEffect(() => {
@@ -183,7 +179,7 @@ function BinarizingImage({ targetColor, threshold, setTargetColor, setThreshold,
         <div className="preview-section">
           <h3>Original Frame</h3>
           <div className="frame-box">
-            {thumbnailUrl  ? (
+            {thumbnailUrl ? (
               <canvas
                 ref={canvasRef}
                 style={{ cursor: "crosshair", width: "100%", height: "100%" }}
@@ -208,7 +204,7 @@ function BinarizingImage({ targetColor, threshold, setTargetColor, setThreshold,
                 style={{
                   width: "100%",
                   height: "100%",
-                  objectFit: "cover", // fills the frame
+                  objectFit: "cover",
                   borderRadius: "12px",
                 }}
               />
@@ -244,7 +240,6 @@ function BinarizingImage({ targetColor, threshold, setTargetColor, setThreshold,
   );
 }
 
-
 // ---------- MAIN PAGE ----------
 export default function PreviewProcessing() {
   const navigate = useNavigate();
@@ -253,6 +248,18 @@ export default function PreviewProcessing() {
   const [targetColor, setTargetColor] = useState("#674ab4");
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [videoFiles, setVideoFiles] = useState([]);
+
+  // ---------- NEW: handle video selection ----------
+  const handleSelectVideo = async (video) => {
+    setSelectedVideo(video); // update state immediately
+    try {
+      await fetch(`${API_BASE_URL}/process/generate-thumbnail/${video}`, {
+        method: "POST",
+      });
+    } catch (err) {
+      console.error("Failed to generate thumbnail", err);
+    }
+  };
 
   // Fetch video list on mount
   useEffect(() => {
@@ -279,34 +286,33 @@ export default function PreviewProcessing() {
   // ✅ START PROCESSING AND GET REAL JOB ID
   const handleProcessVideo = async () => {
     if (!selectedVideo) {
-        alert("Select a video first");
-        return;
+      alert("Select a video first");
+      return;
     }
 
     try {
-        const response = await fetch(`${API_BASE_URL}/process/start`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                inputPath: selectedVideo,
-                targetColor,
-                threshold
-            }),
-        });
+      const response = await fetch(`${API_BASE_URL}/process/start`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          inputPath: selectedVideo,
+          targetColor,
+          threshold
+        }),
+      });
 
-        const data = await response.json();
+      const data = await response.json();
 
-        if (response.ok && data.jobId) {
-            navigate(`/processing/${data.jobId}`);
-        } else {
-            alert(`Failed to start processing: ${data.error || "Unknown error"}`);
-        }
+      if (response.ok && data.jobId) {
+        navigate(`/processing/${data.jobId}`);
+      } else {
+        alert(`Failed to start processing: ${data.error || "Unknown error"}`);
+      }
     } catch (err) {
-        console.error("Error starting processing job:", err);
-        alert("Network error starting job. Check console.");
+      console.error("Error starting processing job:", err);
+      alert("Network error starting job. Check console.");
     }
-};
-
+  };
 
   return (
     <div className="preview-container">
@@ -317,16 +323,16 @@ export default function PreviewProcessing() {
           videoFiles={videoFiles}
           onUpload={handleUpload}
           onDelete={handleDelete}
-          onSelect={setSelectedVideo}
+          onSelect={handleSelectVideo}
           selectedVideo={selectedVideo}
         />
 
         <BinarizingImage
-            threshold={threshold}
-            setThreshold={setThreshold}
-            targetColor={targetColor}
-            setTargetColor={setTargetColor}
-            selectedVideo={selectedVideo}
+          threshold={threshold}
+          setThreshold={setThreshold}
+          targetColor={targetColor}
+          setTargetColor={setTargetColor}
+          selectedVideo={selectedVideo}
         />
       </div>
 
